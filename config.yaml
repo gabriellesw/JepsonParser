@@ -1,0 +1,23 @@
+# =================================================================
+# Application Config goes here
+# =================================================================
+
+defaults: &defaults
+    # Database settings
+    SQLALCHEMY_TRACK_MODIFICATIONS: false
+    SQLALCHEMY_ENGINE_OPTIONS:
+        pool_pre_ping: true
+    # Crawler settings
+    CRAWLER_START_URL: "https://ucjeps.berkeley.edu/IJM_keys/toc.html"
+
+development:
+    # Database settings
+    DB_URI_PREFIX: "sqlite:///"
+    DB_NAME: "app.db"
+    <<: *defaults
+
+testing:
+    <<: *defaults
+
+deployment:
+    <<: *defaults

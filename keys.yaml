@@ -1,0 +1,14 @@
+# =================================================================
+# List of starting keys to crawl, by level. Format is key: name,
+# where key is the eflora key# used on ucjeps.berkeley.edu, and
+# name is the taxonomic-level identifier.
+# =================================================================
+
+family:
+  - "Salicaceae"
+  - "Ericaceae"
+  - "Rhamnaceae"
+  - "Fagaceae"
+
+
+genus:
