@@ -1,10 +1,10 @@
 import scrapy
-import logging
 import pathlib
 
 from yaml_pyconf import SimpleConfig
 
 CONFIG = SimpleConfig(pathlib.Path(__file__).parents[2].joinpath("config.yaml"))
+
 
 class JepsonFamilyCrawler(scrapy.Spider):
     name = "jepson-family-crawler"
@@ -26,14 +26,12 @@ class JepsonFamilyCrawler(scrapy.Spider):
                 # Follow links from the top-level page
                 link = response.xpath(f"//a[contains(text(), '{family_name}')]/@href").get()
                 if link:
-                    logging.info(f"now crawling family {family_name}")
                     yield response.follow(link, callback=self.parse, cb_kwargs={"family": family_name})
 
         # Crawling an individual Family
         elif family:
             link = response.xpath(f"//a[contains(text(), 'Key to')][i[contains(text(), '{family}')]]/@href").get()
             if link:  # Indicates we are on the taxon page and need to get to the key page
-                logging.info(f"going from family {family} taxon page to key page")
                 yield response.follow(link, callback=self.parse, cb_kwargs={"family": family})
             else:  # We are on the key page and need to start crawling genera
                 base_query = "//a[contains(text(), '.....\xa0')]"
@@ -42,23 +40,15 @@ class JepsonFamilyCrawler(scrapy.Spider):
                 genera = [name.split("\xa0")[-1].title() for name in raw_names]
 
                 for genus_name, link in zip(genera, links):
-                    logging.info(f"now crawling genus {genus_name}")
                     yield response.follow(link, callback=self.parse, cb_kwargs={"genus": genus_name})
 
         elif genus:
-            link = response.xpath(f"//a[contains(text(), 'Key to')][i[contains(text(), '{genus}')]]/@href").get()
-            logging.info(f"Genus key page link is {link}")
-            if link:  # Get to genus key page
-                logging.info(f"now going from genus {genus} taxon to key page")
-                yield response.follow(link, callback=self.parse, cb_kwargs={"genus": genus})
-            else:  # Start crawling species
-                base_query = "//a[contains(text(), '.....\xa0')]"
-                links = response.xpath(f"{base_query}/@href").getall()
-                raw_names = response.xpath(f"{base_query}/text()").getall()
-                specieses = [x.split("\xa0")[-1].replace(f"{genus[0]}.", genus) for x in raw_names]
+            # There's a dropdown, so we can go straight to species from here
+            links = response.xpath("//option/@value").getall()
+            species_names = response.xpath("//option/text()").getall()
 
-                for species_name, link in zip(specieses, links):
-                    logging.info(f"now crawling species {species_name}")
+            for species_name, link in zip(species_names, links):
+                if link != "None":
                     yield response.follow(link, callback=self.parse, cb_kwargs={"species": species_name})
 
         elif species:  # We made it! Use <b> tags to identify structured characteristics
@@ -80,5 +70,4 @@ class JepsonFamilyCrawler(scrapy.Spider):
 
             for k, v in zip(fields, values):
                 parsed_data[k] = v
-            logging.info(f"successfully parsed species {species}")
             yield parsed_data
