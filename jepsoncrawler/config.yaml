@@ -4,11 +4,14 @@
 # name is the taxonomic-level identifier.
 # =================================================================
 
-family:
+crawler_start_url: "https://ucjeps.berkeley.edu/IJM_keys/toc.html"
+
+family_keys:
   - "Salicaceae"
   - "Ericaceae"
   - "Rhamnaceae"
   - "Fagaceae"
 
 
-genus:
+genus_keys:
+  - "Salix"

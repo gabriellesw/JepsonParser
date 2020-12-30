@@ -6,7 +6,7 @@
 import scrapy
 
 
-class CrawlerItem(scrapy.Item):
+class JepsoncrawlerItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
