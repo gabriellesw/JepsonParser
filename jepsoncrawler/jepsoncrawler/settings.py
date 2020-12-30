@@ -23,7 +23,7 @@ ROBOTSTXT_OBEY = False
 CONCURRENT_REQUESTS = 1
 
 # Use for debugging
-LOG_LEVEL='DEBUG'
+LOG_LEVEL = 'WARNING'
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay

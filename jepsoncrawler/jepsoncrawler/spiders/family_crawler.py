@@ -53,13 +53,14 @@ class JepsonFamilyCrawler(scrapy.Spider):
 
         elif species:  # We made it! Use <b> tags to identify structured characteristics
             parsed_data = {
+                "url": response.url,
                 "family": response.xpath("//b[contains(text(), 'Family: ')]/text()").get().split("Family: ")[-1],
                 "genus": response.xpath("//b[contains(text(), 'Genus: ')]/text()").get().split("Genus: ")[-1],
                 "species": species,
             }
 
             # This gets everything from the description that's in bold
-            fields = response.xpath("//div[@class='bodyText']/b/text()").getall()
+            fields = response.xpath("//div[@class='bodyText']/b/text()|//div[@class='bodyText']/b/a/text()").getall()
 
             # This gets the stuff that's not in bold and splits it up
             values = response.xpath("//div[@class='bodyText']/text()").getall()
